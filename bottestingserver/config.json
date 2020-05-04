@@ -1,6 +1,0 @@
-{ 
-  "token"  : "{enter token here}",
-  "prefix" : "+",
-  "command" : "$",
-  "timeout" : 120
-}
