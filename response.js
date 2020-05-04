@@ -10,17 +10,11 @@ const defaultText = "585642950361612300"        //urdum general
 const defautVoice = "585642950361612302"        //urdum
 
 exports.botMessage = function(client, message) {
-    //console.log(message)
-
-    //checkMessageConditions(message).then((sendRules) => {react(client, sendRules, textChannel, message);})
-
     var sendRules = checkMessageConditions(message)
     react(client, sendRules, message)
 }
 
 exports.botVoice = function(client, oldState, newState) {
-    //console.log(message)
-
     var sendRules = checkVoiceConditions(oldState, newState)
     react(client, sendRules)
 }
