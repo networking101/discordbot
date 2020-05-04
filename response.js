@@ -150,7 +150,7 @@ function checkVoiceConditions(oldState, newState){
 
 function react(client, sendRules, message) {
     var sendContent = {}
-    var voiceChannel = defautVoice
+    var voiceChannel = defaultVoice
     var newTextChannel = defaultText
 
     fs.readFile(rulesPath, (err, rulesData) => {
