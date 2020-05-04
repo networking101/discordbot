@@ -1,5 +1,5 @@
 { 
-  "token"  : "{enter token here}",
+  "token"  : "{insert bot token here}",
   "prefix" : "+",
   "command" : "$",
   "timeout" : 120

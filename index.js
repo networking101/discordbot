@@ -2,10 +2,14 @@
 const Discord = require("discord.js");
 const fs = require("fs")
 
-const botResponse = require("./response.js");
-const botManage = require("./manage.js");
-const botManageRules = require("./manageRules.js");
-const botAddNewRule = require("./addnewrule.js");
+//const path = "./"
+const path = "/home/pi/urdumbot/"
+const botID = "704483818530144776"
+
+const botResponse = require("/home/pi/urdumbot/response.js");
+const botManage = require("/home/pi/urdumbot/manage.js");
+const botManageRules = require("/home/pi/urdumbot/manageRules.js");
+const botAddNewRule = require("/home/pi/urdumbot/addnewrule.js");
 
 
 /********************************************** start code **********************************************/
@@ -33,14 +37,14 @@ client.on("message", async message => {
   
     if(message.author.bot) return;
 
-    if(fs.existsSync("./" + message.author.id + "user.json") && message.content.indexOf(config.command) !== 0){
-        let addjson = JSON.parse(fs.readFileSync("./" + message.author.id + "user.json"))
+    if(fs.existsSync(path + message.author.id + "user.json") && message.content.indexOf(config.command) !== 0){
+        let addjson = JSON.parse(fs.readFileSync(path + message.author.id + "user.json"))
         if (Date.now()-addjson["timestamp"] > config.timeout*1000){
-            fs.unlinkSync("./" + message.author.id + "user.json")
+            fs.unlinkSync(path + message.author.id + "user.json")
         }
         else if (message.content === "quit" || message.content === "q"){
             message.channel.send("Quit Adding Command")
-            fs.unlinkSync("./" + message.author.id + "user.json")
+            fs.unlinkSync(path + message.author.id + "user.json")
             return
         }
         else {
@@ -73,7 +77,7 @@ client.on("message", async message => {
 client.on("voiceStateUpdate", (oldState, newState) => {
     // This event triggers when a user enters or leave the voice channel.
 
-    if(oldState.member.id === "699813891982622720") return;
+    if (oldState.member.id === botID) return;
 
     botResponse.botVoice(client, oldState, newState);  
   

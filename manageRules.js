@@ -1,13 +1,15 @@
 const fs = require("fs")
 
-const rulesPath = "./rules.json"
-const varsPath = "./variables.json"
+//const rulesPath = "./rules.json"
+const rulesPath = "/home/pi/urdumbot/rules.json"
+//const path = "./"
+const path = "/home/pi/urdumbot/"
 
 exports.manageRules = function(client, message) {
     //console.log(message.content);
 
     if(message.content.length == 2 && message.content.charAt(1) === '?'){
-        message.reply("|\nBot Management\n\n$list         ->  list rules        ('$list' or '$list rulename 1, rulename 2')\n$add        ->  add rule        (follow prompt)\n$delete   ->  delete rule    ('delete rulename 1')")
+        message.reply("|\nBot Management\n\n$list         ->  list rules        ('$list' or '$list rulename 1, rulename 2, ...')\n$add        ->  add rule        (follow prompt)\n$delete   ->  delete rule    ('delete rulename 1')")
     }
     else if(message.content.includes("$list")){
         if(message.content.length == 5){
@@ -52,7 +54,7 @@ exports.manageRules = function(client, message) {
         addRuleJSON["channel"] = message.channel.id
         addRuleJSON["timestamp"] = Date.now()
 
-        fs.writeFile(message.author.id + "user.json", JSON.stringify(addRuleJSON), (err) => {
+        fs.writeFile(path + message.author.id + "user.json", JSON.stringify(addRuleJSON), (err) => {
             if (err) throw err;
         })
 
