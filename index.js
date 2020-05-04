@@ -2,14 +2,14 @@
 const Discord = require("discord.js");
 const fs = require("fs")
 
-//const path = "./"
-const path = "/home/pi/urdumbot/"
+//const path = "/home/pi/urdumbot/"
+const path = "./"
 const botID = "704483818530144776"
 
-const botResponse = require("/home/pi/urdumbot/response.js");
-const botManage = require("/home/pi/urdumbot/manage.js");
-const botManageRules = require("/home/pi/urdumbot/manageRules.js");
-const botAddNewRule = require("/home/pi/urdumbot/addnewrule.js");
+const botResponse = require("./response.js");
+const botManage = require("./manage.js");
+const botManageRules = require("./manageRules.js");
+const botAddNewRule = require("./addnewrule.js");
 
 
 /********************************************** start code **********************************************/

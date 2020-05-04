@@ -1,9 +1,9 @@
 const fs = require("fs")
 
-//const rulesPath = "./rules.json"
-const rulesPath = "/home/pi/urdumbot/rules.json"
-//const path = "./"
-const path = "/home/pi/urdumbot/"
+const rulesPath = "./rules.json"
+//const rulesPath = "/home/pi/urdumbot/rules.json"
+const path = "./"
+//const path = "/home/pi/urdumbot/"
 
 exports.manageRules = function(client, message) {
     //console.log(message.content);

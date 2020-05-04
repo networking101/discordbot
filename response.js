@@ -1,10 +1,14 @@
 const fs = require("fs")
 
-//const rulesPath = "./rules.json"
-const rulesPath = "/home/pi/urdumbot/rules.json"
+const rulesPath = "./rules.json"
+//const rulesPath = "/home/pi/urdumbot/rules.json"
 
-const defaultText = "585642950361612300"        //urdum general
-const defautVoice = "585642950361612302"        //urdum
+//const defaultText = "131087537165959168"        //wulfpack pawty
+//const defaultVoice = "131087538684166144"       //wulfpack pawty
+//const defaultText = "585642950361612300"        //urdum general
+//const defautVoice = "585642950361612302"        //urdum
+const defaultText = "701795436767215689"        //test general
+const defaultVoice = "701795436767215690"        //test General
 
 exports.botMessage = function(client, message) {
     fs.readFile(rulesPath, (err, data) => {
@@ -41,9 +45,11 @@ function checkMessageConditions(message, rules){
                     passedTests = false
                     for (let x of layer1["message user"]){
                         if (x === message.author.id){
+                            passedTests = true
                             break
                         }
                     }
+                    if (!passedTests) break
                 }
                 continue
             }
@@ -57,6 +63,7 @@ function checkMessageConditions(message, rules){
                             break
                         }
                     }
+                    if (!passedTests) break
                 }
                 continue
             }
@@ -70,6 +77,7 @@ function checkMessageConditions(message, rules){
                             break
                         }
                     }
+                    if (!passedTests) break
                 }
                 continue
             }
@@ -83,6 +91,7 @@ function checkMessageConditions(message, rules){
                             break
                         }
                     }
+                    if (!passedTests) break
                 }
                 continue
             }

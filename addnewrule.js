@@ -1,9 +1,10 @@
 const fs = require("fs")
 
-//const rulesPath = "./rules.json"
-const rulesPath = "/home/pi/urdumbot/rules.json"
-//const path = "./"
-const path = "/home/pi/urdumbot/"
+
+const rulesPath = "./rules.json"
+//const rulesPath = "/home/pi/urdumbot/rules.json"
+const path = "./"
+//const path = "/home/pi/urdumbot/"
 
 const message_or_voice = "Does this rule trigger on a message event (type \"[m]essage\") or voice event(type \"[v]oice\")?"
 
