@@ -1,18 +1,9 @@
+const config = require("/home/mike/bottestingserver/config.json");
+
 const fs = require("fs")
 
-const path = "./"
-const rulesPath = "./rules.json"
-//const rulesPath = "/home/pi/urdumbot/rules.json"
-
-//const defaultText = "131087537165959168"        //wulfpack pawty
-//const defaultVoice = "131087538684166144"       //wulfpack pawty
-//const defaultText = "585642950361612300"        //urdum general
-//const defautVoice = "585642950361612302"        //urdum
-const defaultText = "701795436767215689"        //test general
-const defaultVoice = "701795436767215690"        //test General
-
 exports.botMessage = function(client, message) {
-    fs.readFile(rulesPath, (err, data) => {
+    fs.readFile(config.path + "rules.json", (err, data) => {
         if (err) throw err
         var rules = JSON.parse(data)
         var sendRules = checkMessageConditions(message, rules)
@@ -21,14 +12,13 @@ exports.botMessage = function(client, message) {
 }
 
 exports.botVoice = function(client, oldState, newState) {
-    fs.readFile(rulesPath, (err, data) => {
+    fs.readFile(config.path + "rules.json", (err, data) => {
         if (err) throw err
         var rules = JSON.parse(data)
         var sendRules = checkVoiceConditions(oldState, newState, rules)
         react(client, sendRules, rules)
     })
 }
-
 
 function checkMessageConditions(message, rules){
     var passedTests = true
@@ -151,8 +141,8 @@ function checkVoiceConditions(oldState, newState, rules){
 
 function react(client, sendRules, rules, message) {
     var sendContent = {}
-    var voiceChannel = defaultVoice
-    var newTextChannel = defaultText
+    var voiceChannel = config.defaultVoice
+    var newTextChannel = config.defaultText
 
     for (var i = 0; i < sendRules.length; i++){
         var sendMethod = "send"
@@ -180,7 +170,12 @@ function react(client, sendRules, rules, message) {
             if (indexName === "message react emoji"){
                 if (layer1["message react emoji"]){
                     for (let x of layer1["message react emoji"]){
-                        message.react(x)
+                        if (x.length == 1){
+                            message.react(x)
+                        }
+                        else if (x.substring(0,2) === "<:"){
+                            message.react(client.emojis.cache.find(emoji => emoji.id === (x.split(":")[2].slice(0,-1))))
+                        }
                     }
                 }
             }
@@ -232,7 +227,7 @@ function react(client, sendRules, rules, message) {
             .then(channel => {
                 channel.join()
                     .then(connection => {
-                        const dispatcher = connection.play(path + "audio/" + layer1["voice play audio"])
+                        const dispatcher = connection.play(config.path + "audio/" + layer1["voice play audio"])
                         dispatcher.on('finish', () => {channel.leave()})
                     })
             })

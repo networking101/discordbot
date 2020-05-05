@@ -1,6 +1,11 @@
-{ 
-  "token"  : "{insert bot token here}",
-  "prefix" : "+",
-  "command" : "$",
-  "timeout" : 120
+{
+    "bot" : "bottestingserver",
+    "token"  : "{insert bot token here}",
+    "prefix" : "+",
+    "command" : "$",
+    "timeout" : 120,
+    "path"  : "./",
+    "defaultText" : "701795436767215689",
+    "defaultVoice" : "701795436767215690",
+    "botid" : "701795534100234340"
 }

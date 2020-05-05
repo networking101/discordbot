@@ -1,10 +1,6 @@
+const config = require("/home/mike/bottestingserver/config.json");
+
 const fs = require("fs")
-
-
-const rulesPath = "./rules.json"
-//const rulesPath = "/home/pi/urdumbot/rules.json"
-const path = "./"
-//const path = "/home/pi/urdumbot/"
 
 const message_or_voice = "Does this rule trigger on a message event (type \"[m]essage\") or voice event(type \"[v]oice\")?"
 
@@ -47,7 +43,7 @@ const invalid_try_again = "Invalid input. Try again. "
 const bad_format = "Not in the proper format or bad file. Try again. "
 
 exports.addNewRule = function(client, message) {
-    fs.readFile(path + message.author.id + "user.json", (err, data) => {
+    fs.readFile(config.path + message.author.id + "user.json", (err, data) => {
         if (err) throw err
         let addRuleJSON = JSON.parse(data.toString())
         addRuleJSON["timestamp"] = Date.now()
@@ -119,7 +115,7 @@ exports.addNewRule = function(client, message) {
             addRuleJSON[message.content] = {}
             message.reply(message_or_voice + type_quit_to_stop)
         }
-        fs.writeFile(path + message.author.id + "user.json", JSON.stringify(addRuleJSON), (err) => {
+        fs.writeFile(config.path + message.author.id + "user.json", JSON.stringify(addRuleJSON), (err) => {
             if (err) throw err;
         })
     })
@@ -152,7 +148,6 @@ function addMessage(client, message, addRuleJSON) {
                     let curUserVal = currentKey["conditions"]["message channel"]
                     if(message.content.toLowerCase() === "none" || message.content.toLowerCase() === "n"){
                         addRuleJSON["flags"] = completeFlag | 0x8
-                        //message.reply(message_trigger_is_file + type_quit_to_stop)
                         interactResponse(message, addRuleJSON["flags"], "message")
                     }
                     else{
@@ -170,7 +165,6 @@ function addMessage(client, message, addRuleJSON) {
                 let curUserVal = currentKey["conditions"]["message user role"]
                 if(message.content.toLowerCase() === "none" || message.content.toLowerCase() === "n"){
                     addRuleJSON["flags"] = completeFlag | 0x4
-                    //message.reply(message_trigger_which_channel + type_quit_to_stop)
                     interactResponse(message, addRuleJSON["flags"], "message")
                 }
                 else{
@@ -188,7 +182,6 @@ function addMessage(client, message, addRuleJSON) {
             let curUserVal = currentKey["conditions"]["message contents"]
             if(message.content.toLowerCase() === "none" || message.content.toLowerCase() === "n"){
                 addRuleJSON["flags"] = completeFlag | 0x2
-                //message.reply(message_trigger_which_role + type_quit_to_stop)
                 interactResponse(message, addRuleJSON["flags"], "message")
             }
             else{
@@ -201,7 +194,6 @@ function addMessage(client, message, addRuleJSON) {
         let curUserVal = currentKey["conditions"]["message user"]
         if(message.content.toLowerCase() === "none" || message.content.toLowerCase() === "n"){
             addRuleJSON["flags"] = completeFlag | 0x1
-            //message.reply(message_trigger_which_keyword + type_quit_to_stop)
             interactResponse(message, addRuleJSON["flags"], "message")
         }
         else{
@@ -242,7 +234,6 @@ function addVoice(client, message, addRuleJSON) {
         let curUserVal = currentKey["conditions"]["voice user login"]
         if(message.content.toLowerCase() === "none" || message.content.toLowerCase() === "n"){
             addRuleJSON["flags"] = completeFlag | 0x1
-            //message.reply(message_trigger_which_keyword + type_quit_to_stop)
             interactResponse(message, addRuleJSON["flags"], "voice")
         }
         else{
@@ -284,7 +275,6 @@ function addCondition(client, message, addRuleJSON) {
                                 else{                       // can only voice on one channel
                                     if(message.content.toLowerCase() === "none" || message.content.toLowerCase() === "n"){
                                         addRuleJSON["flags"] = completeFlag | 0x80
-                                        //message.reply("Complete")
                                         let returnRuleList = ask_to_add_rule
                                         returnRuleList += Object.keys(addRuleJSON)[5] + JSON.stringify(currentKey).replace(/{/gi, "\n").replace(/}/gi, "\n").replace(/,/gi, "\n") + "\n"
                                         message.reply(returnRuleList)
@@ -293,7 +283,6 @@ function addCondition(client, message, addRuleJSON) {
                                         try {
                                             currentKey["response"]["voice channel"] = client.channels.cache.find(channel => channel.name === message.content).id
                                             addRuleJSON["flags"] = completeFlag | 0x80
-                                            //message.reply("Complete")
                                             let returnRuleList = ask_to_add_rule
                                             returnRuleList += Object.keys(addRuleJSON)[5] + JSON.stringify(currentKey).replace(/{/gi, "\n").replace(/}/gi, "\n").replace(/,/gi, "\n") + "\n"
                                             message.reply(returnRuleList)
@@ -307,23 +296,20 @@ function addCondition(client, message, addRuleJSON) {
                             else{
                                 if(message.content.toLowerCase() === "none" || message.content.toLowerCase() === "n"){
                                     addRuleJSON["flags"] = completeFlag | 0xC0
-                                    //message.reply("Complete")
                                     let returnRuleList = ask_to_add_rule
                                     returnRuleList += Object.keys(addRuleJSON)[5] + JSON.stringify(currentKey).replace(/{/gi, "\n").replace(/}/gi, "\n").replace(/,/gi, "\n") + "\n"
                                     message.reply(returnRuleList)
                                 }
                                 else{
-                                    if(fs.existsSync(path + "audio/" + message.content)){
+                                    if(fs.existsSync(config.path + "audio/" + message.content)){
                                         currentKey["response"]["voice play audio"] = message.content
                                         addRuleJSON["flags"] = completeFlag | 0x40
-                                        //message.reply(response_which_voice_channel + type_quit_to_stop)
                                         interactResponse(message, addRuleJSON["flags"], "")
                                     }
                                     else if(message.content.substring(0,4) === "http")
                                     {
                                         currentKey["response"]["voice play audio"] = message.content
                                         addRuleJSON["flags"] = completeFlag | 0x40
-                                        //message.reply(response_which_voice_channel + type_quit_to_stop)
                                         interactResponse(message, addRuleJSON["flags"], "")
                                     }
                                     else{
@@ -336,13 +322,11 @@ function addCondition(client, message, addRuleJSON) {
                             if(message.content.toLowerCase() === "yes" || message.content.toLowerCase() === "y"){
                                 currentKey["response"]["message delete"] = true
                                 addRuleJSON["flags"] = completeFlag | 0x20
-                                //message.reply(response_which_voice_file + type_quit_to_stop + response_which_voice_rules)
                                 interactResponse(message, addRuleJSON["flags"], "")
                             }
                             else if(message.content.toLowerCase() === "no" || message.content.toLowerCase() === "n"){
                                 currentKey["response"]["message delete"] = false
                                 addRuleJSON["flags"] = completeFlag | 0x20
-                                //message.reply(response_which_voice_file + type_quit_to_stop + response_which_voice_rules)
                                 interactResponse(message, addRuleJSON["flags"], "")
                             }
                             else{
@@ -354,13 +338,11 @@ function addCondition(client, message, addRuleJSON) {
                         if(message.content.toLowerCase() === "yes" || message.content.toLowerCase() === "y"){
                             currentKey["response"]["message reply"] = true
                             addRuleJSON["flags"] = completeFlag | 0x10
-                            //message.reply(response_is_delete + type_quit_to_stop)
                             interactResponse(message, addRuleJSON["flags"], "")
                         }
                         else if(message.content.toLowerCase() === "no" || message.content.toLowerCase() === "n"){
                             currentKey["response"]["message reply"] = false
                             addRuleJSON["flags"] = completeFlag | 0x10
-                            //message.reply(response_is_delete + type_quit_to_stop)
                             interactResponse(message, addRuleJSON["flags"], "")
                         }
                         else{
@@ -372,7 +354,6 @@ function addCondition(client, message, addRuleJSON) {
                     let curUserVal = currentKey["response"]["message react emoji"]
                     if(message.content.toLowerCase() === "none" || message.content.toLowerCase() === "n"){
                         addRuleJSON["flags"] = completeFlag | 0x8
-                        //message.reply(response_is_reply + type_quit_to_stop)
                         interactResponse(message, addRuleJSON["flags"], "")
                     }
                     else{
@@ -382,18 +363,14 @@ function addCondition(client, message, addRuleJSON) {
                 }
             }
             else{                       // can only respond to one channel
-                //let curUserVal = currentKey["response"]["message channel"]
                 if(message.content.toLowerCase() === "none" || message.content.toLowerCase() === "n"){
                     addRuleJSON["flags"] = completeFlag | 0x4
-                    //message.reply(response_which_emoji + type_quit_to_stop)
                     interactResponse(message, addRuleJSON["flags"], "")
                 }
                 else{
                     try {
                         currentKey["response"]["message channel"] = client.channels.cache.find(channel => channel.name === message.content).id
-                        //curUserVal.push(client.channels.cache.find(channel => channel.name === message.content).id)
                         addRuleJSON["flags"] = completeFlag | 0x4
-                        //message.reply("If this rule reacts with an emoji, which one (\"[n]one\" to skip)? This is only valid on a message event. (type \"quit\" to stop)")
                         interactResponse(message, addRuleJSON["flags"], "")
                     }
                     catch (error){
@@ -414,7 +391,7 @@ function addCondition(client, message, addRuleJSON) {
                 interactResponse(message, addRuleJSON["flags"], "")
             }
             else{
-                if(fs.existsSync(path + "audio/" + message.content)){
+                if(fs.existsSync(config.path + "audio/" + message.content)){
                     curUserVal.push(message.content)
                     message.reply(response_other_attachment + type_quit_to_stop)
                 }
@@ -435,7 +412,6 @@ function addCondition(client, message, addRuleJSON) {
             currentKey["response"]["message contents"] = message.content
         }
         addRuleJSON["flags"] = completeFlag | 0x1
-        //message.reply(response_which_attachment + type_quit_to_stop + response_which_attachment_rules)
         interactResponse(message, addRuleJSON["flags"], "")
     }
 }
@@ -500,11 +476,11 @@ function interactResponse(message, flags, event) {
 }
 
 function addCompletedRule(addRuleJSON) {
-    fs.readFile(rulesPath, (err, data) => {
+    fs.readFile(config.path + "rules.json", (err, data) => {
         if (err) throw err
         let rules = JSON.parse(data.toString())
         rules[Object.keys(addRuleJSON)[5]] = addRuleJSON[Object.keys(addRuleJSON)[5]]
-        fs.writeFile(rulesPath, JSON.stringify(rules), (err) => {
+        fs.writeFile(config.path + "rules.json", JSON.stringify(rules), (err) => {
             if (err) throw err;
         })
     })

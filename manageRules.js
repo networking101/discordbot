@@ -1,10 +1,6 @@
-const fs = require("fs")
+const config = require("/home/mike/bottestingserver/config.json");
 
-const rulesPath = "./rules.json"
-//const rulesPath = "/home/pi/urdumbot/rules.json"
-const path = "./"
-//const path = "/home/pi/urdumbot/"
-const defaultVoice = "701795436767215690"        //test General
+const fs = require("fs")
 
 exports.manageRules = function(client, message) {
     //console.log(message.content);
@@ -18,7 +14,7 @@ exports.manageRules = function(client, message) {
     }
     else if (message.content.includes("$list")){
         if(message.content.length == 5){
-            fs.readFile(rulesPath, (err, rulesData) => {
+            fs.readFile(config.path + "rules.json", (err, rulesData) => {
                 if (err) throw err
                 let returnRuleList = ""
                 let rules = JSON.parse(rulesData.toString())
@@ -30,7 +26,7 @@ exports.manageRules = function(client, message) {
         }
         else if (message.content.charAt(5) === " "){
             let ruleList = message.content.slice(5).trim().split(/,+/g)
-            fs.readFile(rulesPath, (err, rulesData) => {
+            fs.readFile(config.path + "rules.json", (err, rulesData) => {
                 if (err) throw err
                 let returnRuleList = ""
                 let rules = JSON.parse(rulesData.toString())
@@ -55,7 +51,7 @@ exports.manageRules = function(client, message) {
         addRuleJSON["channel"] = message.channel.id
         addRuleJSON["timestamp"] = Date.now()
 
-        fs.writeFile(path + message.author.id + "user.json", JSON.stringify(addRuleJSON), (err) => {
+        fs.writeFile(config.path + message.author.id + "user.json", JSON.stringify(addRuleJSON), (err) => {
             if (err) throw err;
         })
 
@@ -65,7 +61,7 @@ exports.manageRules = function(client, message) {
         if (message.content.charAt(7) === " "){
             let returnRuleList = ""
             let ruleList = message.content.slice(7).trim().split(/,+/g)
-            fs.readFile(rulesPath, (err, rulesData) => {
+            fs.readFile(config.path + "rules.json", (err, rulesData) => {
                 if (err) throw err
                 let rules = JSON.parse(rulesData.toString())
 
@@ -81,7 +77,7 @@ exports.manageRules = function(client, message) {
                 else{
                     message.reply("No Rules Found!")
                 }
-                fs.writeFile(rulesPath, JSON.stringify(rules), (err) => {
+                fs.writeFile(config.path + "rules.json", JSON.stringify(rules), (err) => {
                     if (err) throw err;
                 })
             })
@@ -89,7 +85,7 @@ exports.manageRules = function(client, message) {
     }
     else if (message.content.includes("$audio")){
         if(message.content.length == 6){
-            fs.readdir(path + "audio/", function(err, items) {
+            fs.readdir(config.path + "audio/", function(err, items) {
                 let audioList = "|\nLocal Audio Files\n\n"
                 for (let x of items){
                     audioList += x + "\n"
@@ -99,12 +95,12 @@ exports.manageRules = function(client, message) {
         }
         else if (message.content.charAt(6) === " "){
             let ruleList = message.content.slice(6).trim().split(/,+/g)
-            if (fs.existsSync(path + "audio/" + ruleList[0])){
-                client.channels.fetch(defaultVoice)
+            if (fs.existsSync(config.path + "audio/" + ruleList[0])){
+                client.channels.fetch(config.defaultVoice)
                 .then(channel => {
                     channel.join()
                         .then(connection => {
-                            const dispatcher = connection.play(path + "audio/" + ruleList[0])
+                            const dispatcher = connection.play(config.path + "audio/" + ruleList[0])
                             dispatcher.on('finish', () => {channel.leave()})
                         })
                 })

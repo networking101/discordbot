@@ -1,15 +1,13 @@
+const config = require("/home/mike/bottestingserver/config.json");
+
 // Load up the discord.js library
 const Discord = require("discord.js");
 const fs = require("fs")
 
-//const path = "/home/pi/urdumbot/"
-const path = "./"
-const botID = "704483818530144776"
-
-const botResponse = require("./response.js");
-const botManage = require("./manage.js");
-const botManageRules = require("./manageRules.js");
-const botAddNewRule = require("./addnewrule.js");
+const botResponse = require(config.path + "response.js");
+const botManage = require(config.path + "manage.js");
+const botManageRules = require(config.path + "manageRules.js");
+const botAddNewRule = require(config.path + "addnewrule.js");
 
 
 /********************************************** start code **********************************************/
@@ -18,11 +16,6 @@ const botAddNewRule = require("./addnewrule.js");
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
 // this is what we're refering to. Your client.
 const client = new Discord.Client();
-
-// Here we load the config.json file that contains our token and our prefix values. 
-const config = require("./config.json");
-// config.token contains the bot's token
-// config.prefix contains the message prefix.
 
 client.on("ready", () => {
     // This event will run if the bot starts, and logs in, successfully.
@@ -37,14 +30,14 @@ client.on("message", async message => {
   
     if(message.author.bot) return;
 
-    if(fs.existsSync(path + message.author.id + "user.json") && message.content.indexOf(config.command) !== 0){
-        let addjson = JSON.parse(fs.readFileSync(path + message.author.id + "user.json"))
+    if(fs.existsSync(config.path + message.author.id + "user.json") && message.content.indexOf(config.command) !== 0){
+        let addjson = JSON.parse(fs.readFileSync(config.path + message.author.id + "user.json"))
         if (Date.now()-addjson["timestamp"] > config.timeout*1000){
-            fs.unlinkSync(path + message.author.id + "user.json")
+            fs.unlinkSync(config.path + message.author.id + "user.json")
         }
         else if (message.content === "quit" || message.content === "q"){
             message.channel.send("Quit Adding Command")
-            fs.unlinkSync(path + message.author.id + "user.json")
+            fs.unlinkSync(config.path + message.author.id + "user.json")
             return
         }
         else {
@@ -77,7 +70,7 @@ client.on("message", async message => {
 client.on("voiceStateUpdate", (oldState, newState) => {
     // This event triggers when a user enters or leave the voice channel.
 
-    if (oldState.member.id === botID) return;
+    if (oldState.member.id === config.botid) return;
 
     botResponse.botVoice(client, oldState, newState);  
   
