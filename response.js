@@ -1,5 +1,6 @@
 const fs = require("fs")
 
+const path = "./"
 const rulesPath = "./rules.json"
 //const rulesPath = "/home/pi/urdumbot/rules.json"
 
@@ -231,7 +232,7 @@ function react(client, sendRules, rules, message) {
             .then(channel => {
                 channel.join()
                     .then(connection => {
-                        const dispatcher = connection.play(layer1["voice play audio"])
+                        const dispatcher = connection.play(path + "audio/" + layer1["voice play audio"])
                         dispatcher.on('finish', () => {channel.leave()})
                     })
             })

@@ -33,7 +33,7 @@ const response_other_emoji = "Any other emojis (\"[n]one\" to skip)?"
 const response_is_reply = "Is this response message a reply (\"[y]es\" or \"[n]o\")?"
 const response_is_delete = "Should the trigger message be deleted (\"[y]es\" or \"[n]o\")?"
 const response_which_voice_file = "If this rule plays a sound, what file should it play (\"[n]one\" to skip)?"
-const response_which_voice_rules = "\nAttachments must be a valid url link to the image or be a valid mp3 file in /home/pi/discordbotrun/audio/"
+const response_which_voice_rules = "\nAttachments must be a valid url link to the mp3 or be a valid mp3 file in '$audio'"
 const response_which_voice_channel = "If this rule plays a sound, which channel (\"[n]one\" to send to default channel)?"
 
 const done_setting_conditions = "|\nDone setting conditions! Now on to the response\n"
@@ -313,7 +313,7 @@ function addCondition(client, message, addRuleJSON) {
                                     message.reply(returnRuleList)
                                 }
                                 else{
-                                    if(message.content.substring(0,6) === "/home/" && fs.existsSync(message.content)){
+                                    if(fs.existsSync(path + "audio/" + message.content)){
                                         currentKey["response"]["voice play audio"] = message.content
                                         addRuleJSON["flags"] = completeFlag | 0x40
                                         //message.reply(response_which_voice_channel + type_quit_to_stop)
@@ -414,7 +414,7 @@ function addCondition(client, message, addRuleJSON) {
                 interactResponse(message, addRuleJSON["flags"], "")
             }
             else{
-                if(message.content.substring(0,6) === "/home/" && fs.existsSync(message.content)){
+                if(fs.existsSync(path + "audio/" + message.content)){
                     curUserVal.push(message.content)
                     message.reply(response_other_attachment + type_quit_to_stop)
                 }
