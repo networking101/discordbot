@@ -2,7 +2,7 @@ const config = require("/home/mike/bottestingserver/config.json");
 
 const fs = require("fs")
 
-const message_or_voice = "Does this rule trigger on a message event (type \"[m]essage\") or voice event(type \"[v]oice\")?"
+const message_or_voice = "Does this rule trigger on a message event (type \"[m]essage\") or voice event (type \"[v]oice\")?"
 
 const message_trigger_which_user = "Who does this rule trigger on (\"[n]one\" to trigger on everyone)?"
 const message_trigger_other_user = "Who else does this rule trigger on (\"[n]one\" to finish)?"

@@ -8,6 +8,7 @@ const botResponse = require(config.path + "response.js");
 const botManage = require(config.path + "manage.js");
 const botManageRules = require(config.path + "manageRules.js");
 const botAddNewRule = require(config.path + "addnewrule.js");
+const botEcho = require(config.path + "botEcho.js");
 
 
 /********************************************** start code **********************************************/
@@ -22,15 +23,15 @@ client.on("ready", () => {
     console.log(`Update successful!`); 
     // Example of changing the bot's playing game to something useful. `client.user` is what the
     // docs refer to as the "ClientUser".
-    client.user.setActivity(`Rocket League`);
+    client.user.setActivity(config.playing);
 });
 
 client.on("message", async message => {
 // This event will run on every single message received, from any channel or DM.
   
-    if(message.author.bot) return;
+    if (message.author.bot) return;
 
-    if(fs.existsSync(config.path + message.author.id + "user.json") && message.content.indexOf(config.command) !== 0){
+    if (fs.existsSync(config.path + message.author.id + "user.json") && message.content.indexOf(config.command) !== 0){
         let addjson = JSON.parse(fs.readFileSync(config.path + message.author.id + "user.json"))
         if (Date.now()-addjson["timestamp"] > config.timeout*1000){
             fs.unlinkSync(config.path + message.author.id + "user.json")
@@ -40,12 +41,23 @@ client.on("message", async message => {
             fs.unlinkSync(config.path + message.author.id + "user.json")
             return
         }
-        else {
-            if (addjson["channel"] == message.channel.id){
-                botAddNewRule.addNewRule(client, message)
+        else if (addjson["channel"] == message.channel.id){
+            botAddNewRule.addNewRule(client, message)
+            return
+        }
+    }
+
+    if (fs.existsSync(config.path + message.author.id + "echo.json") && message.content.indexOf(config.command) !== 0){
+        let echojson = JSON.parse(fs.readFileSync(config.path + message.author.id + "echo.json"))
+        if (Date.now()-echojson["timestamp"] <= config.timeout*1000){
+            if (message.content === "quit" || message.content === "q"){
+                message.channel.send("Quit Echo")
+                fs.unlinkSync(config.path + message.author.id + "echo.json")
                 return
             }
+            botEcho.echoMessage(client, message, echojson["channel"])
         }
+        fs.unlinkSync(config.path + message.author.id + "echo.json")
     }
 
     if (message.content.indexOf(config.prefix) === 0){

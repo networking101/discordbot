@@ -12,7 +12,7 @@ exports.manageRules = function(client, message) {
                         $delete   ->    delete rule                   ('delete rulename 1')\n\
                         $audio    ->    list local audio files    ('$audio' to list or '$audio audiofile 1' to play file")
     }
-    else if (message.content.includes("$list")){
+    else if (message.content.substring(0,5) === "$list"){
         if(message.content.length == 5){
             fs.readFile(config.path + "rules.json", (err, rulesData) => {
                 if (err) throw err
@@ -45,7 +45,7 @@ exports.manageRules = function(client, message) {
             })
         }
     }
-    else if (message.content.length == 4 && message.content.includes("$add")){
+    else if (message.content === "$add"){
         let addRuleJSON = {}
         addRuleJSON["name"] = message.author.id
         addRuleJSON["channel"] = message.channel.id
@@ -57,7 +57,7 @@ exports.manageRules = function(client, message) {
 
         message.reply("What is the name of the new rule? (type \"quit\" to stop)")
     }
-    else if (message.content.includes("$delete")){
+    else if (message.content.substring(0,7) === "$delete"){
         if (message.content.charAt(7) === " "){
             let returnRuleList = ""
             let ruleList = message.content.slice(7).trim().split(/,+/g)
@@ -83,7 +83,7 @@ exports.manageRules = function(client, message) {
             })
         }
     }
-    else if (message.content.includes("$audio")){
+    else if (message.content.substring(0,6) === "$audio"){
         if(message.content.length == 6){
             fs.readdir(config.path + "audio/", function(err, items) {
                 let audioList = "|\nLocal Audio Files\n\n"
@@ -107,6 +107,25 @@ exports.manageRules = function(client, message) {
 
             }
         }
+    }
+    else if (message.content.substring(0,5) === "$echo"){
+        let echoConfig = {}
+        echoConfig["name"] = message.author.id
+        echoConfig["channel"] = config.defaultText
+        echoConfig["timestamp"] = Date.now()
+        if (message.content.charAt(5) === " "){
+            try{
+                echoConfig["channel"] = client.channels.cache.find(channel => channel.name === message.content.substring(6)).id
+            }
+            catch (error){
+                message.reply("No channel")
+                return
+            }
+        }
+        fs.writeFile(config.path + message.author.id + "echo.json", JSON.stringify(echoConfig), (err) => {
+            if (err) throw err;
+        })
+        message.reply("Ready")
     }
     else{
         message.reply("Not a command. If you are trying to add a command, drop the '$' when setting options")

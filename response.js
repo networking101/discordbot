@@ -7,7 +7,7 @@ exports.botMessage = function(client, message) {
         if (err) throw err
         var rules = JSON.parse(data)
         var sendRules = checkMessageConditions(message, rules)
-        react(client, sendRules, rules, message)
+        react(client, sendRules, rules, 0x0, message)
     })
 }
 
@@ -16,7 +16,7 @@ exports.botVoice = function(client, oldState, newState) {
         if (err) throw err
         var rules = JSON.parse(data)
         var sendRules = checkVoiceConditions(oldState, newState, rules)
-        react(client, sendRules, rules)
+        react(client, sendRules, rules, 0x80000000)
     })
 }
 
@@ -139,33 +139,35 @@ function checkVoiceConditions(oldState, newState, rules){
     return sendRules
 }
 
-function react(client, sendRules, rules, message) {
+function react(client, sendRules, rules, flags, message) {
     var sendContent = {}
     var voiceChannel = config.defaultVoice
     var newTextChannel = config.defaultText
 
     for (var i = 0; i < sendRules.length; i++){
-        var sendMethod = "send"
-        var deleteMethod = "none"
-        var playSound = true
-        var name = sendRules[i]
-        var layer1 = rules[name]["response"]
+        var layer1 = rules[sendRules[i]]["response"]
         for (var j = 0; j < Object.keys(layer1).length; j++){
             var indexName = Object.keys(layer1)[j]
             if (indexName === "message contents"){
                 if (layer1["message contents"]){
                     sendContent["content"] = layer1["message contents"]
+                    flags |= 0x1
                 }
+                continue
             }
             if (indexName === "message attachment"){
-                if (layer1["message attachment"]){
-                    sendContent["files"] = layer1["message attachment"]
+                if (layer1["message attachment"][0]){
+                    sendContent["files"] = layer1["message attachment"]         // this will move all attachments to sendContent
+                    flags |= 0x2
                 }
+                continue
             }
             if (indexName === "message channel"){
                 if (layer1["message channel"]){
                     newTextChannel = layer1["message channel"]
+                    flags |= 0x4
                 }
+                continue
             }
             if (indexName === "message react emoji"){
                 if (layer1["message react emoji"]){
@@ -177,58 +179,58 @@ function react(client, sendRules, rules, message) {
                             message.react(client.emojis.cache.find(emoji => emoji.id === (x.split(":")[2].slice(0,-1))))
                         }
                     }
+                    flags |= 0x8
                 }
+                continue
             }
             if (indexName === "message reply"){
                 if (layer1["message reply"] == true){
-                    sendMethod = "reply"
+                    flags |= 0x10
                 }
+                continue
             }
             if (indexName === "message delete"){
                 if (layer1["message delete"] == true){
-                    deleteMethod = "delete"
+                    flags |= 0x20
                 }
-            }
-            if (!(layer1["message contents"]) && !(layer1["message attachment"][0])){
-                sendMethod = ""
+                continue
             }
             if (indexName === "voice play audio"){
                 if (layer1["voice play audio"]){
-                    voiceMethod = "voiceDefault"
+                    flags |= 0x40
                 }
             }
             if (indexName === "voice channel"){
                 if (layer1["voice channel"]){
                     voiceChannel = layer1["voice channel"]
+                    flags |= 0x80
                 }
             }
         }
-        if (sendMethod === "reply"){
-            message.reply(sendContent)
-        }
-        else if (sendMethod === "send"){
-            try{
-                textChannel = message.channel
-                textChannel.send(sendContent)
+        if (flags & 0x3){
+            if (flags & 0x10){
+                message.reply(sendContent)
             }
-            catch(error)
-            {
+            else if ((flags & 0x80000000) || (flags & 0x4)){
                 client.channels.fetch(newTextChannel)
                     .then(channel => {
                         channel.send(sendContent)
                     }).catch(console.error)
             }
+            else{
+                message.channel.send(sendContent)
+            }
         }
-        if (deleteMethod === "delete"){
+        if (flags & 0x20){
             message.delete()
         }
-        if (playSound){
+        if (flags & 0x40){
             client.channels.fetch(voiceChannel)
             .then(channel => {
                 channel.join()
                     .then(connection => {
                         const dispatcher = connection.play(config.path + "audio/" + layer1["voice play audio"])
-                        dispatcher.on('finish', () => {channel.leave()})
+                        dispatcher.on('finish', () => {channel.leave(); return})
                     })
             })
         }
