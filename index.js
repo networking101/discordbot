@@ -31,6 +31,27 @@ client.on("message", async message => {
   
     if (message.author.bot) return;
 
+    if (client.channels.cache.find(channel => channel.id === message.channel.id).type === "dm"){
+        if (message.author.id !== config.myid)
+        {
+            let newMessage = {}
+            newMessage["content"] = client.users.cache.find(user => user.id === message.author.id).username + "\n" + message.content
+            if (message.attachments.first() != null){
+                newMessage["files"] = [message.attachments.first().url]
+            }
+            let dmuser = client.users.cache.find(client => client.id === config.myid)
+            if (dmuser.dmChannel){
+                dmuser.dmChannel.send(newMessage)
+            }
+            else{
+                dmuser.createDM()
+                    .then(channel => {
+                        channel.send(newMessage)
+                    })
+            }
+        }
+    }
+
     if (fs.existsSync(config.path + message.author.id + "user.json") && message.content.indexOf(config.command) !== 0){
         let addjson = JSON.parse(fs.readFileSync(config.path + message.author.id + "user.json"))
         if (Date.now()-addjson["timestamp"] > config.timeout*1000){

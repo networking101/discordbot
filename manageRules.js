@@ -114,18 +114,45 @@ exports.manageRules = function(client, message) {
         echoConfig["channel"] = config.defaultText
         echoConfig["timestamp"] = Date.now()
         if (message.content.charAt(5) === " "){
-            try{
-                echoConfig["channel"] = client.channels.cache.find(channel => channel.name === message.content.substring(6)).id
+            let findchannel = client.channels.cache.find(channel => channel.name === message.content.substring(6))
+            let finddm = client.users.cache.find(client => client.username === message.content.substring(6))
+            if (findchannel){
+                echoConfig["channel"] = findchannel.id
+                fs.writeFile(config.path + message.author.id + "echo.json", JSON.stringify(echoConfig), (err) => {
+                    if (err) throw err;
+                })
+                message.reply("Ready")
             }
-            catch (error){
-                message.reply("No channel")
+            else if (finddm){
+                if (finddm.dmChannel){
+                    echoConfig["channel"] = finddm.dmChannel.id
+                    fs.writeFile(config.path + message.author.id + "echo.json", JSON.stringify(echoConfig), (err) => {
+                        if (err) throw err;
+                    })
+                    message.reply("Ready")
+                }
+                else{
+                    finddm.createDM()
+                    .then(channel => {
+                        echoConfig["channel"] = channel.id
+                        fs.writeFile(config.path + message.author.id + "echo.json", JSON.stringify(echoConfig), (err) => {
+                            if (err) throw err;
+                        })
+                    })
+                    message.reply("Ready")
+                }
+            }
+            else{
+                message.reply("No channel or user")
                 return
             }
         }
-        fs.writeFile(config.path + message.author.id + "echo.json", JSON.stringify(echoConfig), (err) => {
-            if (err) throw err;
-        })
-        message.reply("Ready")
+        else{
+            fs.writeFile(config.path + message.author.id + "echo.json", JSON.stringify(echoConfig), (err) => {
+                if (err) throw err;
+            })
+            message.reply("Ready")
+        }
     }
     else{
         message.reply("Not a command. If you are trying to add a command, drop the '$' when setting options")

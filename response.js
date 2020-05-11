@@ -5,8 +5,8 @@ const fs = require("fs")
 exports.botMessage = function(client, message) {
     fs.readFile(config.path + "rules.json", (err, data) => {
         if (err) throw err
-        var rules = JSON.parse(data)
-        var sendRules = checkMessageConditions(message, rules)
+        let rules = JSON.parse(data)
+        let sendRules = checkMessageConditions(message, rules)
         react(client, sendRules, rules, 0x0, message)
     })
 }
@@ -14,22 +14,22 @@ exports.botMessage = function(client, message) {
 exports.botVoice = function(client, oldState, newState) {
     fs.readFile(config.path + "rules.json", (err, data) => {
         if (err) throw err
-        var rules = JSON.parse(data)
-        var sendRules = checkVoiceConditions(oldState, newState, rules)
+        let rules = JSON.parse(data)
+        let sendRules = checkVoiceConditions(oldState, newState, rules)
         react(client, sendRules, rules, 0x80000000)
     })
 }
 
 function checkMessageConditions(message, rules){
-    var passedTests = true
-    var sendRules = []
+    let passedTests = true
+    let sendRules = []
 
-    for (var i = 0; i < Object.keys(rules).length; i++){
-        var ruleName = Object.keys(rules)[i]
-        var layer1 = rules[ruleName]["conditions"]
+    for (let i = 0; i < Object.keys(rules).length; i++){
+        let ruleName = Object.keys(rules)[i]
+        let layer1 = rules[ruleName]["conditions"]
         let count = 0
-        for (var j = 0; j < Object.keys(layer1).length; j++){
-            var indexName = Object.keys(layer1)[j]
+        for (let j = 0; j < Object.keys(layer1).length; j++){
+            let indexName = Object.keys(layer1)[j]
             if (indexName === "message user"){
                 if (layer1["message user"][0]){
                     count++
@@ -102,14 +102,14 @@ function checkMessageConditions(message, rules){
 }
 
 function checkVoiceConditions(oldState, newState, rules){
-    var passedTests = false
-    var sendRules = []
+    let passedTests = false
+    let sendRules = []
 
-    for (var i = 0; i < Object.keys(rules).length; i++){
-        var ruleName = Object.keys(rules)[i]
-        var layer1 = rules[ruleName]["conditions"]
-        for (var j = 0; j < Object.keys(layer1).length; j++){
-            var indexName = Object.keys(layer1)[j]
+    for (let i = 0; i < Object.keys(rules).length; i++){
+        let ruleName = Object.keys(rules)[i]
+        let layer1 = rules[ruleName]["conditions"]
+        for (let j = 0; j < Object.keys(layer1).length; j++){
+            let indexName = Object.keys(layer1)[j]
             if (indexName === "voice user login"){
                 if (layer1["voice user login"][0] && oldState.channelID == undefined && !(newState.channelID == undefined)){
                     for (let x of layer1["voice user login"]){
@@ -140,14 +140,14 @@ function checkVoiceConditions(oldState, newState, rules){
 }
 
 function react(client, sendRules, rules, flags, message) {
-    var sendContent = {}
-    var voiceChannel = config.defaultVoice
-    var newTextChannel = config.defaultText
+    let sendContent = {}
+    let voiceChannel = config.defaultVoice
+    let newTextChannel = config.defaultText
 
-    for (var i = 0; i < sendRules.length; i++){
-        var layer1 = rules[sendRules[i]]["response"]
-        for (var j = 0; j < Object.keys(layer1).length; j++){
-            var indexName = Object.keys(layer1)[j]
+    for (let i = 0; i < sendRules.length; i++){
+        let layer1 = rules[sendRules[i]]["response"]
+        for (let j = 0; j < Object.keys(layer1).length; j++){
+            let indexName = Object.keys(layer1)[j]
             if (indexName === "message contents"){
                 if (layer1["message contents"]){
                     sendContent["content"] = layer1["message contents"]
