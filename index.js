@@ -45,9 +45,9 @@ client.on("message", async message => {
             }
             else{
                 dmuser.createDM()
-                    .then(channel => {
-                        channel.send(newMessage)
-                    })
+                .then(channel => {
+                    channel.send(newMessage)
+                })
             }
         }
     }

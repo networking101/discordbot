@@ -100,7 +100,7 @@ exports.manageRules = function(client, message) {
                 .then(channel => {
                     channel.join()
                         .then(connection => {
-                            const dispatcher = connection.play(config.path + "audio/" + ruleList[0])
+                            const dispatcher = connection.play(config.path + "audio/" + ruleList[0], {volume: 0.5})
                             dispatcher.on('finish', () => {channel.leave()})
                         })
                 })

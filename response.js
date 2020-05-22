@@ -229,7 +229,7 @@ function react(client, sendRules, rules, flags, message) {
             .then(channel => {
                 channel.join()
                     .then(connection => {
-                        const dispatcher = connection.play(config.path + "audio/" + layer1["voice play audio"])
+                        const dispatcher = connection.play(config.path + "audio/" + layer1["voice play audio"], {volume: 0.5})
                         dispatcher.on('finish', () => {channel.leave(); return})
                     })
             })
