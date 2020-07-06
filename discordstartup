@@ -1,14 +1,11 @@
 #!/bin/bash
 
-# run this as a cron job on an interval to keep the bot running.
-# If an instance is all ready running, do nothing.  Otherwise, start a new one.
-
-numrun=`ps -aux | grep "node /home/pi/bot/index.js" | wc -l`
+numrun=`ps -aux | grep "node /home/pi/urdumbot/index.js" | wc -l`
 
 if [ $numrun -ge 2 ]
 then
 	echo "Already Running: $numrun"
 else
 	echo "Starting new process"
-	node /home/pi/bot/index.js 2>/home/pi/bot/error.log &
+	node /home/pi/urdumbot/index.js &
 fi

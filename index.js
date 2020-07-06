@@ -11,6 +11,7 @@ const botAddNewRule = require(config.path + "addnewrule.js");
 const botEcho = require(config.path + "botEcho.js");
 
 let rollUsers = {}
+let roll_message_link = ""
 
 
 /********************************************** start code **********************************************/
@@ -59,15 +60,17 @@ client.on("message", async message => {
             }
         }
     }
+    // 4chan roll shenanigans
     else{
         if (message.content.substring(0,4).toLowerCase() === "roll"){
             client.users.cache.forEach(function(value){
                 rollUsers[value.id] = true
             })
+            roll_message_link = "https://discordapp.com/channels/" + message.channel.guild.id + "/" + message.channel.id + "/" + message.id
             message.channel.send("Lets roll some numbers!")
         }
         if (rollUsers[message.author.id] == true){
-            message.channel.send(message.id)
+            message.channel.send(roll_message_link + "\n" + message.id)
             rollUsers[message.author.id] = false
         }
     }

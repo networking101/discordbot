@@ -1,6 +1,6 @@
 {
     "bot" : "bottestingserver",
-    "token"  : "{insert bot token here}",
+    "token"  : "{insert bot token id here}",
     "prefix" : "+",
     "command" : "$",
     "timeout" : 120,
