@@ -2,17 +2,19 @@ const config = require("/home/mike/bottestingserver/config.json");
 
 // Load up the discord.js library
 const Discord = require("discord.js");
-const fs = require("fs")
+const fs = require("fs");
+const { exit } = require("process");
 
 const botResponse = require(config.path + "response.js");
 const botManage = require(config.path + "manage.js");
 const botManageRules = require(config.path + "manageRules.js");
 const botAddNewRule = require(config.path + "addnewrule.js");
 const botEcho = require(config.path + "botEcho.js");
+const aoc = require(config.path + "aoc.js");
+const rolling = require(config.path + "rolling.js");
+const timezone = require(config.path + "timezone.js");
 
 let rollUsers = {}
-let roll_message_link = ""
-
 
 /********************************************** start code **********************************************/
 
@@ -27,11 +29,6 @@ client.on("ready", () => {
     // Example of changing the bot's playing game to something useful. `client.user` is what the
     // docs refer to as the "ClientUser".
     client.user.setActivity(config.playing);
-
-    // set up users for rolling posts
-    client.users.cache.forEach(function(value){
-        rollUsers[value.id] = false
-    })
 });
 
 client.on("message", async message => {
@@ -60,18 +57,15 @@ client.on("message", async message => {
             }
         }
     }
-    // 4chan roll shenanigans
     else{
-        if (message.content.substring(0,4).toLowerCase() === "roll"){
-            client.users.cache.forEach(function(value){
-                rollUsers[value.id] = true
-            })
-            roll_message_link = "https://discordapp.com/channels/" + message.channel.guild.id + "/" + message.channel.id + "/" + message.id
-            message.channel.send("Lets roll some numbers!")
+        // 4chan roll shenanigans
+        if (config.rolling){
+            rolling.rollMessage(client, message, rollUsers);
         }
-        if (rollUsers[message.author.id] == true){
-            message.channel.send(roll_message_link + "\n" + message.id)
-            rollUsers[message.author.id] = false
+
+        // howard needs his sleep
+        if (config.timezone){
+            timezone.timezoneMessage(client, message);
         }
     }
 
@@ -134,5 +128,13 @@ client.on("voiceStateUpdate", (oldState, newState) => {
     botResponse.botVoice(client, oldState, newState);  
   
 });
+
+if (config.adventofcode){
+    function adventofcode() {
+        aoc.adventofcode(client);
+        //exit(0);
+    }
+    setInterval(adventofcode, 1000);
+}
 
 client.login(config.token);

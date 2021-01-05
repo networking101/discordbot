@@ -1,6 +1,6 @@
 {
     "bot" : "bottestingserver",
-    "token"  : "{insert bot token id here}",
+    "token"  : {insert bot token here},
     "prefix" : "+",
     "command" : "$",
     "timeout" : 120,
@@ -9,5 +9,11 @@
     "defaultVoice" : "701795436767215690",
     "botid" : "701795534100234340",
     "myid" : "141019900993994753",
-    "playing" : "testing"
+    "playing" : "testing",
+    "timezone" : true,
+    "germany" : "528045100086067211",
+    "rolling" : true,
+    "skipRoll" : "528045100086067211",
+    "adventofcode" : true,
+    "aocChannel" : "701851391903268984"
 }
