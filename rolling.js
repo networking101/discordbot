@@ -10,6 +10,9 @@ exports.rollMessage = function(client, message, rollUsers) {
         roll_message_link = "https://discordapp.com/channels/" + message.channel.guild.id + "/" + message.channel.id + "/" + message.id
         message.channel.send("Lets roll some numbers!")
     }
+    if (message.content.substring(0,6).toLowerCase() === "reroll"){
+        rollUsers[message.author.id] = true
+    }
     if (!(message.author.id in rollUsers) && roll_message_link){
         rollUsers[message.author.id] = true
     }
